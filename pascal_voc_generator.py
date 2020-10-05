@@ -72,6 +72,8 @@ def create_annotation(
     folder: str="images", 
     sg: int=0) -> str:
 
+    assert isinstance(dimensions, list) or isinstance(dimensions, tuple)
+    assert len(dimensions) > 1 and len(dimensions) < 4
     assert len(objects) > 0, 'annotation has no objects in it'
     header = annotation_header(fname, fpath, label, dimensions)
     obj_xml = ''.join(objects)
