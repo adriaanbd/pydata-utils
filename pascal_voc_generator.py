@@ -63,22 +63,7 @@ def annotation_header(
     header = ''.join(tags)
     return header
 
-def create_annotation(
-    fname: str, 
-    fpath: str, 
-    label: str, 
-    dimensions: list,
-    objects: list, 
-    folder: str="images", 
-    sg: int=0) -> str:
 
-    assert isinstance(dimensions, list) or isinstance(dimensions, tuple)
-    assert len(dimensions) > 1 and len(dimensions) < 4
-    assert len(objects) > 0, 'annotation has no objects in it'
-    header = annotation_header(fname, fpath, label, dimensions)
-    obj_xml = ''.join(objects)
-
-    return XML + add_tag(ANNOTATION, header)
 
 def create_minmax(minvector: list, maxvector: list):
     xmin, ymin = minvector
@@ -112,6 +97,23 @@ def create_object(label: str, minvector: list, maxvector: list):
     obj_xml = add_tag(OBJECT, header + box)
     return obj_xml
 
+def create_annotation(
+    fname: str, 
+    fpath: str, 
+    label: str, 
+    dimensions: list,
+    objects: list, 
+    folder: str="images", 
+    sg: int=0) -> str:
+
+    assert isinstance(dimensions, list) or isinstance(dimensions, tuple)
+    assert len(dimensions) > 1 and len(dimensions) < 4
+    assert len(objects) > 0, 'annotation has no objects in it'
+    header = annotation_header(fname, fpath, label, dimensions)
+    obj_xml = ''.join(objects)
+
+    return XML + add_tag(ANNOTATION, header + obj_xml)
+
 if __name__ == "__main__":
     print('Testing:\n')
     minvector = [516, 1375]
@@ -125,10 +127,10 @@ if __name__ == "__main__":
     for i in range(3):
         obj_xml = create_object(label, minvector, maxvector)
         objects.append(obj_xml)
-    
+    print('objects', objects)
     xml = create_annotation(fname, fpath, label, dimensions, objects)
     print(xml)
 
-    output = 'test.xml'
+    output = 'pascal-voc-test.xml'
     with open(output, 'w') as xml_writer:
         xml_writer.write(xml)
