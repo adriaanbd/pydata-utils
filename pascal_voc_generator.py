@@ -33,8 +33,7 @@ def annotation_header(
     folder: str="images", 
     sg: int=0) -> str:
     
-    assert len(dimensions) > 0, 'dimensions'
-    assert len(dimensions) < 4
+    assert len(dimensions) > 0 and len(dimensions) < 4
     if len(dimensions) == 2:
         w, h, d = dimensions[0], dimensions[1], 3
     elif len(dimensions) == 3:
@@ -73,7 +72,7 @@ def create_annotation(
     folder: str="images", 
     sg: int=0) -> str:
 
-    assert len(objects) > 0, 'Annotation with no objects'
+    assert len(objects) > 0, 'annotation has no objects in it'
     header = annotation_header(fname, fpath, label, dimensions)
     obj_xml = ''.join(objects)
 
@@ -101,6 +100,11 @@ def object_header(label: str, trunc=1, diff=0):
     return header_xml
 
 def create_object(label: str, minvector: list, maxvector: list):
+    assert isinstance(label, str), 'label name needs to be of str type'
+    assert isinstance(minvector, list) or isinstance(minvector, tuple)
+    assert isinstance(maxvector, list) or isinstance(maxvector, tuple)
+    assert len(minvector) == 2, 'min vector needs to be [xmin, ymin]'
+    assert len(maxvector) == 2, 'max vector needs to be [xmax, ymax]'
     header = object_header(label)
     box = create_bndbox(minvector, maxvector)
     obj_xml = add_tag(OBJECT, header + box)
